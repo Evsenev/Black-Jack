@@ -3,51 +3,88 @@ using System.IO;
 
 namespace BlackJack
 {
-	
-
-	public class Moneys
-	{	
-
-		int bank_computer = 1000;
-		int bank_player = 1000;
 
 
+    public class Game
+    {
+        public static bool PlayerWin = false;
+        public static int PlayerBalance= 1000;
+        public static int ComputerBalance = 1000;
+        public static int Bank;
 
-
-
-
-		public int BetBank ()
-		{	
-			int bet = Convert.ToInt32 (Console.ReadLine ());
-			bet *= 2;
-
-			return bet;
-		}
-	
-	}
+        public void Play()
+        {
+            
+        }
 
 
 
-
-	public class Cards
-	{
-
-	}
+        public static void BetToBank()
+        {
 
 
-	class MainClass
-	{
-		public static void Main (string[] args)
+            Bank = Convert.ToInt32(Console.ReadLine());
+            PlayerBalance -= Bank;
+            ComputerBalance -= Bank;
+            Bank *= 2;
 
-		{
-			Console.Write (" Добро пожаловать в, Black Jack!\n");
+            
+        }
 
-			Moneys play = new Moneys();
 
-			Console.Write ("Введите ставку от $5 до $100: ");
-			int bank = play.BetBank ();
 
-			Console.WriteLine ("Ваша ставка ${0}.\tБанк: ${1}", (bank / 2), bank);
-		}
-	}
+        public static void Info()
+        {
+            Console.Write(" Добро пожаловать в, Black Jack!\n");
+
+
+
+            Console.Write("Введите ставку от $5 до $100.\nМоя ставка: ");
+            BetToBank();
+
+
+            Console.WriteLine("\nВаш баланс: ${0}.\tБаланс комьютера: ${1}", PlayerBalance, ComputerBalance);
+            Console.WriteLine("\nВаша ставка ${0}.\tБанк: ${1}", (Bank / 2), Bank);
+
+        }
+
+        public static void MoneyToWinner(int PlayerBalance, int ComputerBalance, int Bank)
+        {
+            if (PlayerWin == true) 
+            {
+                PlayerBalance += Bank;
+            }
+            if (PlayerWin == false) 
+            {
+                ComputerBalance += Bank;
+            }
+            
+        }
+
+
+
+
+    }
+
+
+
+
+    public class Cards
+    {
+
+    }
+
+
+    class MainClass
+    {
+        public static void Main(string[] args)
+        {
+
+            Game.Info();
+
+            //Завершние программы
+            Console.WriteLine("\nНажмите любую клавишу...");
+            Console.ReadKey();
+        }
+    }
 }
