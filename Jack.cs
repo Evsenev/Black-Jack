@@ -1,9 +1,9 @@
 using System;
 using System.IO;
+using System.Collections;
 
 namespace BlackJack
 {
-
 
     public class Game
     {
@@ -16,8 +16,6 @@ namespace BlackJack
         {
             
         }
-
-
 
         public static void BetToBank()
         {
@@ -32,7 +30,6 @@ namespace BlackJack
         }
 
 
-
         public static void Info()
         {
             Console.Write(" Добро пожаловать в, Black Jack!\n");
@@ -44,12 +41,12 @@ namespace BlackJack
 
 
             Console.WriteLine("\nВаш баланс: ${0}.\tБаланс комьютера: ${1}", PlayerBalance, ComputerBalance);
-            Console.WriteLine("\nВаша ставка ${0}.\tБанк: ${1}", (Bank / 2), Bank);
+            Console.WriteLine("\nВаша ставка ${0}.\t\tБанк: ${1}", (Bank / 2), Bank);
 
         }
 
         public static void MoneyToWinner(int PlayerBalance, int ComputerBalance, int Bank)
-        {
+		{
             if (PlayerWin == true) 
             {
                 PlayerBalance += Bank;
@@ -60,13 +57,7 @@ namespace BlackJack
             }
             
         }
-
-
-
-
     }
-
-
 
 
     public class Cards
@@ -79,8 +70,18 @@ namespace BlackJack
     {
         public static void Main(string[] args)
         {
+			for(;;)
+			{	
+				Game.Info ();
+				if (Game.ComputerBalance <= 0)
+					break;
+				if (Game.PlayerBalance <= 0) break;
+				Console.WriteLine ("Нажмите любую клавишу, чтобы проодолжить...");
+				Console.ReadKey ();
+				Console.Clear ();
+			}
 
-            Game.Info();
+
 
             //Завершние программы
             Console.WriteLine("\nНажмите любую клавишу...");
