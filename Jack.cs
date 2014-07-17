@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace BlackJack
 {
@@ -10,7 +10,7 @@ namespace BlackJack
         public static bool PlayerWin = false;
         public static int PlayerBalance= 1000;
         public static int ComputerBalance = 1000;
-        public static int Bank;
+        public static int Bank, Bet;
 
         public void Play()
         {
@@ -20,28 +20,44 @@ namespace BlackJack
         public static void BetToBank()
         {
 
-
-            Bank = Convert.ToInt32(Console.ReadLine());
+            Bet = Convert.ToInt32(Console.ReadLine());
             PlayerBalance -= Bank;
             ComputerBalance -= Bank;
-            Bank *= 2;
-
-            
+            Bank = Bet*2;
+    
         }
 
 
+		public static List <Card> CardsPack = new List<Card>();
+
+		public static void AddCards()
+		{
+			for (int i=0; i < 13; i++) {
+				int value = 2;
+				if(value <= 9 )value++;
+				if (i > 9)value = 11;
+				for (int j = 0; j < 4; j++) {
+					CardsPack.Add (new Card (value, Colors.Clubs));
+					CardsPack.Add (new Card (value, Colors.Diamonds));
+					CardsPack.Add (new Card (value, Colors.Hearts));
+					CardsPack.Add (new Card (value, Colors.Spades));
+				}
+			}
+		}
+
+
+
         public static void Info()
-        {
-            Console.Write(" Добро пожаловать в, Black Jack!\n");
+		{
+			Console.Write("♠ ♣ ♥ ♦ Добро пожаловать в, Black Jack ♠ ♣ ♥ ♦!\n");
 
-
+			// Console.WriteLine (Game.CardsPack.Count); //Проверка
 
             Console.Write("Введите ставку от $5 до $100.\nМоя ставка: ");
             BetToBank();
 
-
             Console.WriteLine("\nВаш баланс: ${0}.\tБаланс комьютера: ${1}", PlayerBalance, ComputerBalance);
-            Console.WriteLine("\nВаша ставка ${0}.\t\tБанк: ${1}", (Bank / 2), Bank);
+            Console.WriteLine("\nВаша ставка ${0}.\t\tБанк: ${1}", Bet, Bank);
 
         }
 
@@ -54,12 +70,11 @@ namespace BlackJack
             if (PlayerWin == false) 
             {
                 ComputerBalance += Bank;
-            }
-            
+            }   
         }
     }
 
-	enum Colors {Spades, Hearts, Clubs, Diamonds } // Картончные масти
+	public enum Colors {Spades, Hearts, Clubs, Diamonds } // Картончные масти
 
     public class Card
     {
@@ -70,7 +85,6 @@ namespace BlackJack
 			card_score = theCardScore;
 			CardColor = theCardColor;
 		}
-
     }
 
 
@@ -78,6 +92,9 @@ namespace BlackJack
     {
         public static void Main(string[] args)
         {
+			Game.AddCards ();
+		
+
 			for(;;)
 			{	
 				Game.Info ();
@@ -88,16 +105,7 @@ namespace BlackJack
 				Console.ReadKey ();
 				Console.Clear ();
 
-				Card qeen = new Card (5,Colors.Hearts);
-
-				Console.WriteLine ();
-					if (qeen.CardColor == Colors.Hearts)
-						Console.WriteLine(qeen.card_score);
-
-
 			}
-
-
 
             //Завершние программы
             Console.WriteLine("\nНажмите любую клавишу...");
