@@ -59,9 +59,17 @@ namespace BlackJack
         }
     }
 
+	enum Colors {Spades, Hearts, Clubs, Diamonds } // Картончные масти
 
-    public class Cards
+    public class Card
     {
+		public int card_score;
+		public Colors CardColor;
+		public Card (int theCardScore, Colors theCardColor) 
+		{
+			card_score = theCardScore;
+			CardColor = theCardColor;
+		}
 
     }
 
@@ -76,9 +84,17 @@ namespace BlackJack
 				if (Game.ComputerBalance <= 0)
 					break;
 				if (Game.PlayerBalance <= 0) break;
-				Console.WriteLine ("Нажмите любую клавишу, чтобы проодолжить...");
+				Console.WriteLine ("Нажмите любую клавишу, чтобы продолжить...");
 				Console.ReadKey ();
 				Console.Clear ();
+
+				Card qeen = new Card (5,Colors.Hearts);
+
+				Console.WriteLine ();
+					if (qeen.CardColor == Colors.Hearts)
+						Console.WriteLine(qeen.card_score);
+
+
 			}
 
 
