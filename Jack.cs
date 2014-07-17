@@ -37,10 +37,7 @@ namespace BlackJack
 				if(value <= 9 )value++;
 				if (i > 9)value = 11;
 				for (int j = 0; j < 4; j++) {
-					CardsPack.Add (new Card (value, Colors.Clubs));
-					CardsPack.Add (new Card (value, Colors.Diamonds));
-					CardsPack.Add (new Card (value, Colors.Hearts));
-					CardsPack.Add (new Card (value, Colors.Spades));
+					CardsPack.Add (new Card (value, (Colors)j));
 				}
 			}
 		}
@@ -51,7 +48,7 @@ namespace BlackJack
 		{
 			Console.Write("♠ ♣ ♥ ♦ Добро пожаловать в, Black Jack ♠ ♣ ♥ ♦!\n");
 
-			// Console.WriteLine (Game.CardsPack.Count); //Проверка
+			Console.WriteLine (Game.CardsPack[1]); //Проверка
 
             Console.Write("Введите ставку от $5 до $100.\nМоя ставка: ");
             BetToBank();
