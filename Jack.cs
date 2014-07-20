@@ -135,13 +135,16 @@ namespace BlackJack
 			int value = 2;
 			for (int i=0; i < 13; i++) {
 				for (int j = 0; j < 4; j++) {
-					CardsPack.Add (new Card (value, (Color)j));
+					if(i <= 8)CardsPack.Add (new Card (value, (Color)j,(Convert.ToString(value))));
+					if(i == 9) CardsPack.Add (new Card (value, (Color)j,"J"));
+					if(i == 10) CardsPack.Add (new Card (value, (Color)j,"Q"));
+					if(i == 11) CardsPack.Add (new Card (value, (Color)j,"K"));
+					if(i == 12) CardsPack.Add (new Card (value, (Color)j,"A"));
 				}
 				if (value < 10)
 					value++;
 				if (i > 10)
 					value = 11;
-
 			}
 		}
 
@@ -150,7 +153,7 @@ namespace BlackJack
 			if (WhosePack == Opponent.Player) {
 				Console.WriteLine ("\nВаши карты:");
 				for (int i = 0; i < PlayerPack.Count; i++) {
-					Console.Write ("\t{0} ", PlayerPack [i].card_score);
+					Console.Write ("\t{0} ", PlayerPack[i].view);
 					if (PlayerPack [i].CardColor == Color.Clubs)
 						Console.Write ("♣");
 					if (PlayerPack [i].CardColor == Color.Spades)
@@ -164,7 +167,7 @@ namespace BlackJack
 			if (WhosePack == Opponent.Computer) {
 				Console.WriteLine ("\nКарты компьютера:");
 				for (int i = 0; i < ComputerPack.Count; i++) {
-					Console.Write ("\t{0} ", ComputerPack [i].card_score);
+					Console.Write ("\t{0} ", ComputerPack [i].view);
 					if (ComputerPack [i].CardColor == Color.Clubs)
 						Console.Write ("♣");
 					if (ComputerPack [i].CardColor == Color.Spades)
@@ -254,10 +257,12 @@ namespace BlackJack
     {
 		public int card_score;
 		public Color CardColor;
-		public Card (int theCardScore, Color theCardColor) 
+		public string view;
+		public Card (int theCardScore, Color theCardColor, string theView) 
 		{
 			card_score = theCardScore;
 			CardColor = theCardColor;
+			view = theView;
 		}
     }
 
