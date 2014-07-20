@@ -13,33 +13,28 @@ namespace BlackJack
 
 		public  Opponent WinResult ()
 		{
-			if (ComputerScore > 21) {
-				Console.WriteLine ("\n\nВы ВЫИГРАЛИ!");
-				return Opponent.Player;
-			} else if (PlayerScore > 21) {
+		if (ComputerScore <= 21) {
+			if (ComputerScore > PlayerScore) {
 				Console.WriteLine ("\n\nВы ПРОИГРАЛИ!");
 				return Opponent.Computer;
-			} else if (ComputerScore > PlayerScore) {
-				Console.WriteLine ("\n\nВы ПРОИГРАЛИ!");
-				return Opponent.Computer;
-			} else if (PlayerScore > ComputerScore) {
-				Console.WriteLine ("\n\nВы ВЫИГРАЛИ!");
-				return Opponent.Player;
-			} else if (PlayerScore == ComputerScore) {
-				Console.WriteLine ("\n\nНИЧЬЯ!");
-				return Opponent.Draw;
-			} else {
-				Console.WriteLine ("\n\nНИЧЬЯ!");
-				return Opponent.Draw;
 			}
-
+		} else if (PlayerScore <= 21) {
+			if (PlayerScore > ComputerScore) {
+				Console.WriteLine ("\n\nВы ВЫИГРАЛИ!");
+				return Opponent.Player;
+			}
+		} else {
+			Console.WriteLine ("\n\nНИЧЬЯ!");
+			return Opponent.NoBody;
+			}
 		}
+	
 
 		public void AskPlayerCard ()
 		{	
-
+			// если 21 нужно не спрашивать о карте
 			Console.WriteLine ("\nХотите взять еще карту?" +
-				"\nНажмите ДА (Y/y) или НЕТ (N\\n)");
+				"\nНажмите ДА (Y) или НЕТ (N)");
 			char PressKey = (char)Console.Read ();
 			if (PressKey == 'Y' || PressKey == 'y') {
 				GiveCard (Opponent.Player);
@@ -91,6 +86,7 @@ namespace BlackJack
 		public void BetToBank ()
 		{
 			for (;;) {
+
 				Console.Write ("Введите вашу ставку цифрами до $100.\nМоя ставка: ");
 				try {
 					Bet = Convert.ToInt32 (Console.ReadLine ());
@@ -102,8 +98,14 @@ namespace BlackJack
 					Console.WriteLine ("Попробуйте еще раз. Введите ставку от 1 до 100 цифрами.");
 					Bet = 0;
 				}
-				if (Bet > 0 && Bet <= 100)
-					break;
+				if (Bet > 0 && Bet <= 100) {
+					if (Bet > PlayerBalance) {
+						Console.WriteLine ("Попробуйте еще раз. Введите ставку меньше или равную балансу.");
+						Bet = 0;
+					} else {
+						break;
+					}
+				}
 			}
 
 			PlayerBalance -= Bet;
@@ -225,7 +227,7 @@ namespace BlackJack
 				PlayerBalance += Bank;
 			} else if (Winner == Opponent.Computer) {
 				ComputerBalance += Bank;
-			} else if (Winner == Opponent.Draw) {
+			} else if (Winner == Opponent.NoBody) {
 				ComputerBalance += Bet;
 				PlayerBalance += Bet;
 			}
@@ -238,7 +240,7 @@ namespace BlackJack
 		Clubs,
 		Diamonds
 } 	// Картончные масти
-	public enum Opponent {Player, Computer, Draw}  				// Оппоненты
+	public enum Opponent {Player, Computer, NoBody}  				// Оппоненты
 
     public class Card
     {
