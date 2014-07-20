@@ -13,20 +13,28 @@ namespace BlackJack
 
 		public  Opponent WinResult ()
 		{
-		if (ComputerScore <= 21) {
-			if (ComputerScore > PlayerScore) {
-				Console.WriteLine ("\n\nВы ПРОИГРАЛИ!");
-				return Opponent.Computer;
-			}
-		} else if (PlayerScore <= 21) {
-			if (PlayerScore > ComputerScore) {
-				Console.WriteLine ("\n\nВы ВЫИГРАЛИ!");
+			if(ComputerScore > 21 && PlayerScore > 21)
+				return Opponent.Nobody;
+			if(ComputerScore > 21)
 				return Opponent.Player;
-			}
-		} else {
-			Console.WriteLine ("\n\nНИЧЬЯ!");
-			return Opponent.NoBody;
-			}
+			if(PlayerScore > 21)
+				return Opponent.Computer;
+			if(ComputerScore == PlayerScore)
+				return Opponent.Nobody;
+			if(ComputerScore > PlayerScore) 
+				return Opponent.Computer;
+			else
+				return Opponent.Player;
+		}
+
+		public void PrintWinner(Opponent Winner){
+			Console.WriteLine("\n\nОчки компьютера: {0}\t\tВаши очки: {1}",Game.ComputerScore, Game.PlayerScore);
+			if (Winner == Opponent.Computer) 
+				Console.WriteLine ("\nВы ПРОИГРАЛИ!");
+			else if (Winner == Opponent.Player) 
+				Console.WriteLine ("\nВы ВЫИГРАЛИ!");
+			else 
+				Console.WriteLine ("\nНИЧЬЯ!");
 		}
 	
 
@@ -53,28 +61,28 @@ namespace BlackJack
 
 		}
 
-		public void StartGame () //Начало игры
+		public void StartGame () 
 		{
 			PrintBalance ();
 			BetToBank ();
 			PrintBalance ();
-			AddCards (); 			//Обновляем колоду
-			GiveStartCards ();		//Получаем стартовые карты
-			ComputerLogic ();		//Включяем логику компьютера
+			AddCards (); 			
+			GiveStartCards ();		
+			ComputerLogic ();		
 
-			Console.WriteLine ("Ваши карты:");
 			ShowCards (Opponent.Player);
-
 			AskPlayerCard ();
 			CalculateResult ();
 
 			Console.Clear ();
 
-			Console.WriteLine ("\nВаши карты:");
+
 			ShowCards (Opponent.Player);
-			Console.WriteLine ("\nКарты компьютера:");
 			ShowCards (Opponent.Computer);
-			MoneyToWinner (WinResult ());
+
+			Opponent isWinner = WinResult (); 
+			MoneyToWinner (isWinner);
+			PrintWinner (isWinner);
 
 		}
 
@@ -98,7 +106,7 @@ namespace BlackJack
 					Console.WriteLine ("Попробуйте еще раз. Введите ставку от 1 до 100 цифрами.");
 					Bet = 0;
 				}
-				if (Bet > 0 && Bet <= 100) {
+				if (0 < Bet && Bet <= 100) {
 					if (Bet > PlayerBalance) {
 						Console.WriteLine ("Попробуйте еще раз. Введите ставку меньше или равную балансу.");
 						Bet = 0;
@@ -140,7 +148,7 @@ namespace BlackJack
 		public void ShowCards (Opponent WhosePack)
 		{
 			if (WhosePack == Opponent.Player) {
-				Console.WriteLine ();
+				Console.WriteLine ("\nВаши карты:");
 				for (int i = 0; i < PlayerPack.Count; i++) {
 					Console.Write ("\t{0} ", PlayerPack [i].card_score);
 					if (PlayerPack [i].CardColor == Color.Clubs)
@@ -154,7 +162,7 @@ namespace BlackJack
 				}
 			}
 			if (WhosePack == Opponent.Computer) {
-				Console.WriteLine ();
+				Console.WriteLine ("\nКарты компьютера:");
 				for (int i = 0; i < ComputerPack.Count; i++) {
 					Console.Write ("\t{0} ", ComputerPack [i].card_score);
 					if (ComputerPack [i].CardColor == Color.Clubs)
@@ -227,7 +235,7 @@ namespace BlackJack
 				PlayerBalance += Bank;
 			} else if (Winner == Opponent.Computer) {
 				ComputerBalance += Bank;
-			} else if (Winner == Opponent.NoBody) {
+			} else if (Winner == Opponent.Nobody) {
 				ComputerBalance += Bet;
 				PlayerBalance += Bet;
 			}
@@ -240,7 +248,7 @@ namespace BlackJack
 		Clubs,
 		Diamonds
 } 	// Картончные масти
-	public enum Opponent {Player, Computer, NoBody}  				// Оппоненты
+	public enum Opponent {Player, Computer, Nobody}  				// Оппоненты
 
     public class Card
     {
@@ -273,7 +281,7 @@ namespace BlackJack
 					Console.WriteLine ("У Вас кончились деньги.");
 					break;
 				}
-				Console.WriteLine("\nОчки компьютера: {0}\t\tВаши очки: {1}",Game.ComputerScore, Game.PlayerScore);
+
 				Console.WriteLine ("\nНажмите любую клавишу, чтобы продолжить игру...");
 				Console.ReadKey ();
 				Console.Clear ();
