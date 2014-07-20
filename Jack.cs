@@ -4,34 +4,52 @@ using System.Collections.Generic;
 
 namespace BlackJack
 {
+	public class Game
+	{
+		public static int PlayerBalance = 1000;
+		public static int ComputerBalance = 1000;
+		public static int Bank, Bet;
+		public static int ComputerScore, PlayerScore;
 
-    public class Game
-    {
-        public static int PlayerBalance= 1000;
-        public static int ComputerBalance = 1000;
-        public static int Bank, Bet;
-		public static int ComputerScore, PlayerScore, PlayerCardsCount, ComputerCardsCount;
+		public  Opponent WinResult ()
+		{
+			if (ComputerScore > 21) {
+				Console.WriteLine ("\n\nВы ВЫИГРАЛИ!");
+				return Opponent.Player;
+			} else if (PlayerScore > 21) {
+				Console.WriteLine ("\n\nВы ПРОИГРАЛИ!");
+				return Opponent.Computer;
+			} else if (ComputerScore > PlayerScore) {
+				Console.WriteLine ("\n\nВы ПРОИГРАЛИ!");
+				return Opponent.Computer;
+			} else if (PlayerScore > ComputerScore) {
+				Console.WriteLine ("\n\nВы ВЫИГРАЛИ!");
+				return Opponent.Player;
+			} else if (PlayerScore == ComputerScore) {
+				Console.WriteLine ("\n\nНИЧЬЯ!");
+				return Opponent.Draw;
+			} else {
+				Console.WriteLine ("\n\nНИЧЬЯ!");
+				return Opponent.Draw;
+			}
 
-        public  Opponents WinResult()
-        {
-			if (ComputerScore > 21 || PlayerScore > ComputerScore) 
-				return Opponents.Player;
-			if (PlayerScore > 21 || ComputerScore > PlayerScore)
-				return Opponents.Computer;
-			else
-				return Opponents.Computer;
-			            
-        }
+		}
 
 		public void AskPlayerCard ()
 		{	
 
-			Console.WriteLine("\nХотите взять еще карту?" +
-			                  "\nНажмите <Y> (ДА) или <N> (Нет) и нажмите ENTER... ");
-			char PressKey = (char)Console.Read();
+			Console.WriteLine ("\nХотите взять еще карту?" +
+				"\nНажмите ДА (Y/y) или НЕТ (N\\n)");
+			char PressKey = (char)Console.Read ();
 			if (PressKey == 'Y' || PressKey == 'y') {
-				GiveCard (Opponents.Player);
-				ShowCards (Opponents.Player);
+				GiveCard (Opponent.Player);
+				ShowCards (Opponent.Player);
+				CalculateResult ();
+				if (PlayerScore > 21) {
+					return;
+				} else {
+					AskPlayerCard ();
+				}
 			} else if (PressKey == 'N' || PressKey == 'n') {
 				return;
 			} else {
@@ -42,170 +60,191 @@ namespace BlackJack
 
 		public void StartGame () //Начало игры
 		{
-			Info ();
+			PrintBalance ();
+			BetToBank ();
+			PrintBalance ();
 			AddCards (); 			//Обновляем колоду
 			GiveStartCards ();		//Получаем стартовые карты
-			CalculateResult ();		//Подсчитываем карты
 			ComputerLogic ();		//Включяем логику компьютера
 
 			Console.WriteLine ("Ваши карты:");
-			ShowCards (Opponents.Player);
+			ShowCards (Opponent.Player);
 
 			AskPlayerCard ();
 			CalculateResult ();
-			WinResult ();
 
-			Console.WriteLine ("Карты компьютера:");
-			ShowCards (Opponents.Computer);
+			Console.Clear ();
+
+			Console.WriteLine ("\nВаши карты:");
+			ShowCards (Opponent.Player);
+			Console.WriteLine ("\nКарты компьютера:");
+			ShowCards (Opponent.Computer);
+			MoneyToWinner (WinResult ());
+
 		}
 
-        public void BetToBank()
-        {
-            Bet = Convert.ToInt32(Console.ReadLine());
-            PlayerBalance -= Bank;
-            ComputerBalance -= Bank;
-            Bank = Bet*2;
-        }
-
-		public static List <Card> PlayerPack = new List<Card>();
-		public static List <Card> ComputerPack = new List<Card>();
-		public static List <Card> CardsPack = new List<Card>();
-
-		public void AddCards()
+		public void PrintBalance ()
 		{
-			CardsPack.Clear();
+			Console.WriteLine ("\nВаш баланс: ${0}.\tБаланс комьютера: ${1}", PlayerBalance, ComputerBalance);
+		}
+
+		public void BetToBank ()
+		{
+			for (;;) {
+				Console.Write ("Введите вашу ставку цифрами до $100.\nМоя ставка: ");
+				try {
+					Bet = Convert.ToInt32 (Console.ReadLine ());
+				} catch {
+					Bet = 0;
+					Console.WriteLine ("Не корректный ввод. Попробуйте еще раз.");
+				}
+				if (Bet <= 0 && Bet > 100) {
+					Console.WriteLine ("Попробуйте еще раз. Введите ставку от 1 до 100 цифрами.");
+					Bet = 0;
+				}
+				if (Bet > 0 && Bet <= 100)
+					break;
+			}
+
+			PlayerBalance -= Bet;
+			ComputerBalance -= Bet;
+			Bank = Bet * 2;
+			Console.WriteLine ("\nВаша ставка ${0}.\t\tБанк: ${1}", Bet, Bank);
+		}
+
+		public static List <Card> PlayerPack = new List<Card> ();
+		public static List <Card> ComputerPack = new List<Card> ();
+		public static List <Card> CardsPack = new List<Card> ();
+
+		public void AddCards ()
+		{
+			CardsPack.Clear ();
 			ComputerScore = 0;
 			PlayerScore = 0;
 
 			int value = 2;
 			for (int i=0; i < 13; i++) {
 				for (int j = 0; j < 4; j++) {
-					CardsPack.Add (new Card (value, (Colors)j));
+					CardsPack.Add (new Card (value, (Color)j));
 				}
-				if(value < 10 )value++;
-				if (i > 10)value = 11;
+				if (value < 10)
+					value++;
+				if (i > 10)
+					value = 11;
 
 			}
 		}
 
-		public void ShowCards (Opponents WhosePack)
+		public void ShowCards (Opponent WhosePack)
 		{
-			if (WhosePack == Opponents.Player) 
-			{
+			if (WhosePack == Opponent.Player) {
 				Console.WriteLine ();
-				for (int i = 0; i < PlayerCardsCount; i++) 
-				{
+				for (int i = 0; i < PlayerPack.Count; i++) {
 					Console.Write ("\t{0} ", PlayerPack [i].card_score);
-					if (PlayerPack [i].CardColor == Colors.Clubs) Console.Write ("♣");
-					if (PlayerPack [i].CardColor == Colors.Spades) Console.Write ("♠");
-					if (PlayerPack [i].CardColor == Colors.Hearts) Console.Write ("♥");
-					if (PlayerPack [i].CardColor == Colors.Diamonds) Console.Write ("♦"); 
+					if (PlayerPack [i].CardColor == Color.Clubs)
+						Console.Write ("♣");
+					if (PlayerPack [i].CardColor == Color.Spades)
+						Console.Write ("♠");
+					if (PlayerPack [i].CardColor == Color.Hearts)
+						Console.Write ("♥");
+					if (PlayerPack [i].CardColor == Color.Diamonds)
+						Console.Write ("♦"); 
 				}
 			}
-			if (WhosePack == Opponents.Computer) 
-			{
+			if (WhosePack == Opponent.Computer) {
 				Console.WriteLine ();
-				for (int i = 0; i < 2; i++) 
-				{
+				for (int i = 0; i < ComputerPack.Count; i++) {
 					Console.Write ("\t{0} ", ComputerPack [i].card_score);
-					if (ComputerPack [i].CardColor == Colors.Clubs) Console.Write ("♣");
-					if (ComputerPack [i].CardColor == Colors.Spades) Console.Write ("♠");
-					if (ComputerPack [i].CardColor == Colors.Hearts) Console.Write ("♥");
-					if (ComputerPack [i].CardColor == Colors.Diamonds) Console.Write ("♦"); 
+					if (ComputerPack [i].CardColor == Color.Clubs)
+						Console.Write ("♣");
+					if (ComputerPack [i].CardColor == Color.Spades)
+						Console.Write ("♠");
+					if (ComputerPack [i].CardColor == Color.Hearts)
+						Console.Write ("♥");
+					if (ComputerPack [i].CardColor == Color.Diamonds)
+						Console.Write ("♦"); 
 				}
 			}
 		}
 
-
-
-		public void GiveCard (Opponents WhoTakeCard)
+		public void GiveCard (Opponent WhoTakeCard)
 		{
-			int cardsInPack = 52;
-			int numberCard = new Random ().Next (0, cardsInPack);
-			int numberCard2 = new Random ().Next (0, cardsInPack);
 
+			int numberCard = new Random ().Next (0, CardsPack.Count);
+			int numberCard2 = new Random ().Next (0, CardsPack.Count);
 
-			if (WhoTakeCard == Opponents.Player) {
+			if (WhoTakeCard == Opponent.Player) {
 				PlayerPack.Add (CardsPack [numberCard]);
 				CardsPack.RemoveAt (numberCard);
-				cardsInPack--;
-				PlayerCardsCount++;
 			} else {
 				ComputerPack.Add (CardsPack [numberCard2]);
 				CardsPack.RemoveAt (numberCard2);
-				cardsInPack--;
-				ComputerCardsCount++;
 			}
 		}
 
-		public void GiveStartCards()
+		public void GiveStartCards ()
 		{
-			PlayerCardsCount = 2;
-			ComputerCardsCount = 2;
 
-			PlayerPack.Clear();
-			ComputerPack.Clear();
+			PlayerPack.Clear ();
+			ComputerPack.Clear ();
 
-			GiveCard (Opponents.Player);
-			GiveCard (Opponents.Computer);
-			GiveCard (Opponents.Player);
-			GiveCard (Opponents.Computer);
+			GiveCard (Opponent.Player);
+			GiveCard (Opponent.Computer);
+			GiveCard (Opponent.Player);
+			GiveCard (Opponent.Computer);
 		}
 
 		public void ComputerLogic ()  //Пока что простая и тупая логика
 		{
-			if (ComputerScore <= 15) 
-			{
-				GiveCard (Opponents.Computer);
+			CalculateResult ();
+			if (ComputerScore <= 15) {
+				GiveCard (Opponent.Computer);
+				ComputerLogic ();
+			} else {
+				return;
 			}
 
 		}
 
-		public void CalculateResult()
+		public void CalculateResult ()
 		{
 			PlayerScore = 0;
 			ComputerScore = 0;
 
-			for (int i = 0; i < PlayerCardsCount-1; i++) 
-			{
+			for (int i = 0; i < PlayerPack.Count; i++) {
 				PlayerScore += PlayerPack [i].card_score;
 			}
-			for (int i = 0; i < ComputerCardsCount-1; i++)
-			{
-			PlayerScore += ComputerPack[i].card_score;
+			for (int i = 0; i < ComputerPack.Count; i++) {
+				ComputerScore += ComputerPack [i].card_score;
 			}
 		}
 
-        public void Info()
+		public void MoneyToWinner (Opponent Winner) // На получение поставить метод WinResult
 		{
-			Console.Write("♠ ♣ ♥ ♦ Добро пожаловать в, Black Jack ♦ ♥ ♣ ♠\n");
-
-			Console.Write("Введите ставку от $5 до $100.\nМоя ставка: ");
-			BetToBank();
-			Console.WriteLine("\nВаш баланс: ${0}.\tБаланс комьютера: ${1}", PlayerBalance, ComputerBalance);
-            Console.WriteLine("\nВаша ставка ${0}.\t\tБанк: ${1}", Bet, Bank);
-
-
-        }
-
-        public void MoneyToWinner(Opponents Winner) // На получение поставить метод WinResult
-		{
-			if (Winner == Opponents.Player) {
+			if (Winner == Opponent.Player) {
 				PlayerBalance += Bank;
-			} else {
+			} else if (Winner == Opponent.Computer) {
 				ComputerBalance += Bank;
-			} 
-        }
-    }
+			} else if (Winner == Opponent.Draw) {
+				ComputerBalance += Bet;
+				PlayerBalance += Bet;
+			}
+		}
+	}
 
-	public enum Colors {Spades, Hearts, Clubs, Diamonds } 	// Картончные масти
-	public enum Opponents {Player, Computer}  				// Оппоненты
+	public enum Color
+	{		Spades,
+		Hearts,
+		Clubs,
+		Diamonds
+} 	// Картончные масти
+	public enum Opponent {Player, Computer, Draw}  				// Оппоненты
 
     public class Card
     {
 		public int card_score;
-		public Colors CardColor;
-		public Card (int theCardScore, Colors theCardColor) 
+		public Color CardColor;
+		public Card (int theCardScore, Color theCardColor) 
 		{
 			card_score = theCardScore;
 			CardColor = theCardColor;
@@ -219,15 +258,21 @@ namespace BlackJack
         {
 			Game GamePlay = new Game ();
 
+			Console.WriteLine("♠ ♣ ♥ ♦ Добро пожаловать в Black Jack ♦ ♥ ♣ ♠\n");
 
 			for(;;)
 			{	
 				GamePlay.StartGame ();
-				if (Game.ComputerBalance <= 0)
+				if (Game.ComputerBalance <= 0) {
+					Console.WriteLine ("У Компьютера кончились деньги. ");
 					break;
-				if (Game.PlayerBalance <= 0) 
+				}
+				if (Game.PlayerBalance <= 0) {
+					Console.WriteLine ("У Вас кончились деньги.");
 					break;
-				Console.WriteLine ("Нажмите любую клавишу, чтобы продолжить...");
+				}
+				Console.WriteLine("\nОчки компьютера: {0}\t\tВаши очки: {1}",Game.ComputerScore, Game.PlayerScore);
+				Console.WriteLine ("\nНажмите любую клавишу, чтобы продолжить игру...");
 				Console.ReadKey ();
 				Console.Clear ();
 
@@ -236,6 +281,7 @@ namespace BlackJack
             //Завершние программы
             Console.WriteLine("\nНажмите любую клавишу...");
             Console.ReadKey();
+
         }
     }
 }
