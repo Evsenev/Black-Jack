@@ -10,6 +10,7 @@ namespace BlackJack
 		public static int ComputerBalance = 1000;
 		public static int Bank, Bet;
 		public static int ComputerScore, PlayerScore;
+        public Random randomCard = new Random(); 
 
 		public  Opponent WinResult ()
 		{
@@ -40,7 +41,7 @@ namespace BlackJack
 
 		public void AskPlayerCard ()
 		{	
-			// если 21 нужно не спрашивать о карте
+			
 			Console.WriteLine ("\nХотите взять еще карту?" +
 				"\nНажмите ДА (Y) или НЕТ (N)");
 			char PressKey = (char)Console.Read ();
@@ -180,18 +181,17 @@ namespace BlackJack
 			}
 		}
 
+
+
 		public void GiveCard (Opponent WhoTakeCard)
 		{
 
-			int numberCard = new Random ().Next (0, CardsPack.Count);
-			int numberCard2 = new Random ().Next (0, CardsPack.Count);
-
 			if (WhoTakeCard == Opponent.Player) {
-				PlayerPack.Add (CardsPack [numberCard]);
-				CardsPack.RemoveAt (numberCard);
+				PlayerPack.Add (CardsPack [randomCard.Next(0,CardsPack.Count)]);
+                CardsPack.RemoveAt(randomCard.Next(0, CardsPack.Count));
 			} else {
-				ComputerPack.Add (CardsPack [numberCard2]);
-				CardsPack.RemoveAt (numberCard2);
+                ComputerPack.Add(CardsPack[randomCard.Next(0, CardsPack.Count)]);
+                CardsPack.RemoveAt(randomCard.Next(0, CardsPack.Count));
 			}
 		}
 
@@ -232,7 +232,7 @@ namespace BlackJack
 			}
 		}
 
-		public void MoneyToWinner (Opponent Winner) // На получение поставить метод WinResult
+		public void MoneyToWinner (Opponent Winner) 
 		{
 			if (Winner == Opponent.Player) {
 				PlayerBalance += Bank;
@@ -250,8 +250,8 @@ namespace BlackJack
 		Hearts,
 		Clubs,
 		Diamonds
-} 	// Картончные масти
-	public enum Opponent {Player, Computer, Nobody}  				// Оппоненты
+} 	
+	public enum Opponent {Player, Computer, Nobody}  				
 
     public class Card
     {
