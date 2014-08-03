@@ -185,13 +185,14 @@ namespace BlackJack
 
 		public void GiveCard (Opponent WhoTakeCard)
 		{
+			int isCard = randomCard.Next (0, CardsPack.Count);
 
 			if (WhoTakeCard == Opponent.Player) {
-				PlayerPack.Add (CardsPack [randomCard.Next(0,CardsPack.Count)]);
-                CardsPack.RemoveAt(randomCard.Next(0, CardsPack.Count));
+				PlayerPack.Add (CardsPack [isCard]);
+                CardsPack.RemoveAt(isCard);
 			} else {
-                ComputerPack.Add(CardsPack[randomCard.Next(0, CardsPack.Count)]);
-                CardsPack.RemoveAt(randomCard.Next(0, CardsPack.Count));
+                ComputerPack.Add(CardsPack[isCard]);
+                CardsPack.RemoveAt(isCard);
 			}
 		}
 
